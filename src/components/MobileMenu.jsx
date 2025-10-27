@@ -1,0 +1,16 @@
+import { MenuIcon, XIcon } from "lucide-react";
+
+const MobileMenu = ({ isOpen, onToggle }) => {
+  document.body.classList.toggle("overflow-hidden", isOpen);
+
+  return (
+    <button
+      className={`flex-center borderX z-51 border-l p-4 lg:hidden ${isOpen ? "bg-primary text-white" : "text-base-content bg-transparent"}`}
+      aria-label="open menu"
+      onClick={onToggle}
+    >
+      {isOpen ? <XIcon size={40} /> : <MenuIcon size={40} />}
+    </button>
+  );
+};
+export default MobileMenu;
