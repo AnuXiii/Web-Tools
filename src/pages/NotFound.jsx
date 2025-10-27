@@ -5,9 +5,7 @@ const NotFound = () => {
   return (
     <section id="notFound">
       <div className="flex-center container flex-col px-4 text-center">
-        <h1 className="mb-2 text-3xl font-bold md:text-6xl">
-          Page not found : (
-        </h1>
+        <h1 className="mb-2 text-3xl font-bold md:text-6xl">Page Not Found</h1>
         <a
           href="/"
           data-route="/"

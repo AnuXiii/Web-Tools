@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Asap:ital,wght@0,100..900;1,100..900&display=swap");
 @import "tailwindcss";
 @import "./css/animations.css";
 
@@ -31,7 +31,7 @@
   --color-error-content: oklch(27% 0.105 12.094);
 
   /* fonts */
-  --font-roboto: "Roboto", sans-serif;
+  --font-asap: "Asap", sans-serif;
 
   /* animations */
   --animate-fade-up: fade-up 200ms ease-in-out forwards;
@@ -96,7 +96,7 @@
   }
 
   body {
-    @apply font-roboto bg-base-300 text-base-content min-h-screen overflow-x-hidden text-base;
+    @apply font-asap bg-base-300 text-base-content min-h-screen overflow-x-hidden text-base;
   }
 
   button {

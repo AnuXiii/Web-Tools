@@ -69,10 +69,11 @@ const ThemeToggle = () => {
     <div data-theme-toggle className="borderX relative z-50 border-r">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="hover:text-primary focus:outline-primary focus:text-primary p-4 outline outline-transparent duration-100 outline-solid"
+        className="hover:text-primary focus:outline-base-content focus:text-primary p-4 outline outline-transparent duration-100 outline-solid"
       >
         {theme === "dark" ? <Moon size={40} /> : <Sun size={40} />}
       </button>
+      {/* theme options dropdown */}
       <ul
         className={`bg-base-200 shadow-neutral/10 border-base-content/10 divide-base-content/10 absolute top-[110%] left-1 w-full divide-y rounded-lg border border-solid shadow-2xl ${isOpen ? "" : "hidden"}`}
       >

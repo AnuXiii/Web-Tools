@@ -6,10 +6,10 @@ import Button from "../components/Button";
 import { FileCode, FileType, Link, Scaling } from "lucide-react";
 
 // text area component
-const TextArea = ({ hasUploaded, onTextChange }) => {
+const TextArea = ({ hasUploaded, onTextChange, isUploading }) => {
   const [text, setText] = useState("");
   const [status, setStatus] = useState("idle");
-  const hasFeched = useRef(false);
+  const hasFetched = useRef(false);
 
   // check data is uploaded
   useEffect(() => {
@@ -19,18 +19,23 @@ const TextArea = ({ hasUploaded, onTextChange }) => {
 
   // upload default data when rendering
   useEffect(() => {
-    if (hasFeched.current) return;
-    hasFeched.current = true;
+    if (hasFetched.current) return;
+    hasFetched.current = true;
 
     const loadText = async () => {
+      setStatus("loading");
+
+      const savedValue = sessionStorage.textEditorValue;
+
+      if (savedValue) {
+        setText(savedValue);
+        setStatus("success");
+        return;
+      }
+
       try {
-        setStatus("loading");
         const res = await fetch(defaultData);
-
-        if (!res.ok) {
-          throw new Error("Can't fetch data");
-        }
-
+        if (!res.ok) throw new Error("Can't fetch data");
         const data = await res.text();
         setText(data);
         setStatus("success");
@@ -42,19 +47,22 @@ const TextArea = ({ hasUploaded, onTextChange }) => {
     };
 
     loadText();
-  });
+  }, []);
 
   // track textarea value changed
   useEffect(() => {
+    sessionStorage.textEditorValue = text;
     onTextChange(text);
   }, [text, onTextChange]);
 
   return (
     <>
-      {status === "loading" ? (
+      {status === "loading" || isUploading ? (
         <Loader />
       ) : (
         <textarea
+          id="textarea"
+          name="textarea"
           placeholder="Write text..."
           value={text}
           onChange={(e) => setText(e.target.value)}
@@ -78,7 +86,7 @@ const Actions = ({ onFileUpload, onRun, onFileDonwload }) => {
       {/* upload file button */}
       <label
         htmlFor="upload-text-file"
-        className="flex cursor-pointer items-center gap-2 italic opacity-70 hover:opacity-100"
+        className="flex cursor-pointer items-center gap-2 italic opacity-70 select-none hover:opacity-100"
       >
         <Link size={16} />
         <span>attach file</span>
@@ -93,7 +101,7 @@ const Actions = ({ onFileUpload, onRun, onFileDonwload }) => {
         />
       </label>
       {/*  */}
-      <div className="flex-center gap-3">
+      <div className="flex-center gap-3 max-sm:flex-col max-sm:*:w-full max-sm:*:py-2! max-sm:*:text-lg">
         {/*  */}
         <Button
           text="Run"
@@ -117,6 +125,8 @@ const TextEditor = () => {
   const [uploadedText, setUploadedText] = useState("");
   const [fileToRun, setFileToRun] = useState("");
   const [textContent, setTextContent] = useState("");
+  const [isUploading, setIsUploading] = useState(false);
+  const [isPreviewLoading, setIsPreviewLoading] = useState(false);
   // save load preview format and download format from stroage
   const [previewFormat, setPreviewFormat] = useState(
     localStorage.previewFormat || "html",
@@ -135,19 +145,24 @@ const TextEditor = () => {
     if (!file) return;
 
     try {
+      setIsUploading(true);
       const reader = new FileReader();
+
       reader.onload = () => {
         setUploadedText(reader.result);
-        reader.abort();
+        setIsUploading(false);
       };
+
       reader.onerror = () => {
         toast.error("Error when converted file");
+        setIsUploading(false);
         reader.abort();
       };
 
       reader.readAsText(file);
     } catch (error) {
       toast.error(error.message);
+      setIsUploading(false);
     }
   };
 
@@ -158,16 +173,26 @@ const TextEditor = () => {
     }
 
     try {
+      setIsPreviewLoading(true);
+
+      if (fileToRun) URL.revokeObjectURL(fileToRun);
+
       const blob = new Blob([textContent], {
         type: `text/${previewFormat}`,
       });
       const url = URL.createObjectURL(blob);
       setFileToRun(url);
-      return () => URL.revokeObjectURL(blob);
     } catch (error) {
       toast.error(error.message);
+      setIsPreviewLoading(false);
     }
   };
+
+  useEffect(() => {
+    return () => {
+      if (fileToRun) URL.revokeObjectURL(fileToRun);
+    };
+  }, [fileToRun]);
 
   useEffect(() => {
     if (!textContent) return;
@@ -180,10 +205,10 @@ const TextEditor = () => {
     const a = document.createElement("a");
     Object.assign(a, {
       href: url,
-      download: `${location.pathname}.${downloadFormat === "html" ? downloadFormat : "txt"}`,
+      download: `${"output"}.${downloadFormat === "html" ? downloadFormat : "txt"}`,
     });
     a.click();
-    URL.revokeObjectURL(url);
+    setTimeout(() => URL.revokeObjectURL(url), 100);
   };
 
   return (
@@ -199,6 +224,7 @@ const TextEditor = () => {
                 <TextArea
                   hasUploaded={uploadedText}
                   onTextChange={setTextContent}
+                  isUploading={isUploading}
                 />
                 {/*  */}
                 <i className="pointer-events-none absolute right-2 bottom-2 opacity-50">
@@ -212,8 +238,8 @@ const TextEditor = () => {
               />
             </div>
             <div className="mt-5">
-              <ul className="flex items-center gap-3">
-                <li>
+              <ul className="flex flex-col items-center justify-start gap-3 sm:flex-row">
+                <li className="max-sm:w-full">
                   <Button
                     text={`Preview format : ${previewFormat}`}
                     icon={previewFormat === "html" ? FileCode : FileType}
@@ -223,11 +249,11 @@ const TextEditor = () => {
                       )
                     }
                     customClasses={
-                      "bg-neutral border border-base-content/30 text-white/90 text-sm! px-3!"
+                      "w-full bg-neutral border border-base-content/30 text-white/90 text-sm! px-3!"
                     }
                   />
                 </li>
-                <li>
+                <li className="max-sm:w-full">
                   <Button
                     text={`Download format : ${downloadFormat}`}
                     icon={downloadFormat === "html" ? FileCode : FileType}
@@ -237,17 +263,28 @@ const TextEditor = () => {
                       )
                     }
                     customClasses={
-                      "bg-neutral border border-base-content/30 text-white/90 text-sm! px-3!"
+                      "w-full bg-neutral border border-base-content/30 text-white/90 text-sm! px-3!"
                     }
                   />
                 </li>
               </ul>
               {fileToRun && (
-                <iframe
-                  src={fileToRun}
-                  title="preview"
-                  className="*:text-base-content! mt-4 h-96 w-full border"
-                ></iframe>
+                <div className="flex-center relative mt-4 h-96 w-full flex-col border">
+                  {isPreviewLoading && (
+                    <div className="flex-center bg-base-200/80 absolute inset-0">
+                      <Loader />
+                    </div>
+                  )}
+                  <iframe
+                    src={fileToRun}
+                    title="preview"
+                    className="*:text-base-content! h-full w-full"
+                    onLoad={(e) => {
+                      setIsPreviewLoading(false);
+                      e.target.scrollIntoView({ block: "end" });
+                    }}
+                  ></iframe>
+                </div>
               )}
             </div>
           </div>

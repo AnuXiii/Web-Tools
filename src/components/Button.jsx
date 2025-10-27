@@ -1,7 +1,7 @@
 import PropTypes from "prop-types";
 
 const Button = ({
-  tag: Tag = "button",
+  tag = "button",
   path,
   id,
   text,
@@ -10,6 +10,7 @@ const Button = ({
   customClasses,
   children,
 }) => {
+  const Tag = tag;
   const linkProps = path && { href: path, "data-route": path };
 
   return (
@@ -28,13 +29,14 @@ const Button = ({
 };
 
 Button.propTypes = {
-  tag: PropTypes.elementType,
+  tag: PropTypes.element,
   path: PropTypes.string,
   id: PropTypes.string,
   text: PropTypes.string,
   icon: PropTypes.elementType,
   onClick: PropTypes.func,
   customClasses: PropTypes.string,
+  children: PropTypes.element,
 };
 
 export default Button;

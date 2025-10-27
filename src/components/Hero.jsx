@@ -7,35 +7,35 @@ import { ExternalLink } from "lucide-react";
 
 // render app features cards
 const renderCards = (start, end) => {
-  return [...features]
-    .slice(start, end)
-    .map(({ name, path, icon: Icon, colors }) => {
-      const borderColorStyles = {
-        borderColor: colors.borderColor,
-      };
-      return (
-        <div
-          key={name}
-          style={borderColorStyles}
-          className="flex-center group hover:border-primary! relative w-full rounded-lg border-2 border-b-5 border-solid p-4 duration-100 hover:scale-90 hover:-rotate-2 hover:border-b-2 md:h-60"
-        >
-          <div className="flex-center flex-col gap-5">
-            <Icon
-              size={60}
-              stroke={`${colors.textColor}`}
-              className="group-hover:stroke-primary duration-100 md:size-24"
-            />
-            <span className="text-center font-semibold md:text-xl">{name}</span>
-          </div>
-          <a
-            href={path}
-            data-route={path}
-            aria-label={name}
-            className="absolute inset-0"
-          ></a>
+  return [...features].slice(start, end).map(({ name, path, icon, colors }) => {
+    const Icon = icon;
+    const borderColorStyles = {
+      borderColor: colors.borderColor,
+    };
+
+    return (
+      <div
+        key={name}
+        style={borderColorStyles}
+        className="flex-center group hover:border-primary! relative w-full rounded-lg border-2 border-b-5 border-solid p-4 duration-100 hover:scale-90 hover:-rotate-2 hover:border-b-2 md:h-60"
+      >
+        <div className="flex-center flex-col gap-5">
+          <Icon
+            size={60}
+            stroke={`${colors.textColor}`}
+            className="group-hover:stroke-primary duration-100 md:size-24"
+          />
+          <span className="text-center font-semibold md:text-xl">{name}</span>
         </div>
-      );
-    });
+        <a
+          href={path}
+          data-route={path}
+          aria-label={name}
+          className="absolute inset-0"
+        ></a>
+      </div>
+    );
+  });
 };
 
 const Hero = () => {
@@ -63,8 +63,9 @@ const Hero = () => {
                 Try new Web API's now
               </h1>
               <p className="text-base-content/70 text-lg text-pretty">
-                work with all new web api's on your device and use now for free
-                to learn more creativity and more new features...
+                Explore powerful web APIs and innovative tools on your device.
+                Use for free to enhance your creativity and discover new
+                features.
               </p>
             </div>
             {/* open try modal button */}

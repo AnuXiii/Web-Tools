@@ -13,13 +13,15 @@ import MusicPlayer from "./components/MusicPlayer";
 const App = () => {
   // app name
   const appName = "Web Tools";
-  // check user if not in modal path
-  const initialPath = location.pathname.includes("modal")
-    ? (location.pathname = "/")
-    : location.pathname;
-
   // keep save current path state
-  const [currentPath, setCurrentPath] = useState(initialPath);
+  const [currentPath, setCurrentPath] = useState(location.pathname);
+
+  // check user if not in modal path
+  if (history.state) {
+    if (history.state.name.includes("modal")) {
+      location.pathname = "/";
+    }
+  }
 
   // find jsx component by path
   const getComponent = (path) => {

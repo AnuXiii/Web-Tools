@@ -1,3 +1,4 @@
+import { X } from "lucide-react";
 import backgroundMusic from "../assets/audios/background-music.mp3";
 import { useEffect, useRef, useState } from "react";
 import { ScaleLoader } from "react-spinners";
@@ -94,19 +95,29 @@ const MusicPlayer = () => {
   return (
     <div className="flex-center fixed right-5 bottom-5 z-40 flex-col">
       <p
-        className={`border-base-content/30 bg-neutral pointer-events-none absolute right-1 bottom-15 mx-auto translate-y-2 rounded-lg border p-2 text-center text-nowrap text-white opacity-0 duration-200 ${tooltipVisibility ? "animate-fade-up" : "animate-fade-down"}`}
+        className={`border-base-content/30 bg-base-300 text-base-content absolute right-1 bottom-15 mx-auto translate-y-2 rounded-lg border p-2 text-center text-nowrap opacity-0 duration-200 ${tooltipVisibility ? "animate-fade-up pointer-events-auto" : "animate-fade-down pointer-events-none"}`}
       >
-        <span>tap to play music</span>
-        <span className="border-base-content/30 absolute right-3 -bottom-[11px] z-[-1] h-0 w-0 border-10 border-b-0 border-solid border-r-transparent border-l-transparent"></span>
+        <span className="flex-center gap-1">
+          <span>tap to play music</span>
+          <i
+            className="cursor-pointer"
+            onClick={() => setToolTipVisibility(false)}
+          >
+            <X />
+          </i>
+        </span>
+        <span className="border-base-content absolute right-3 -bottom-[11px] z-[-1] h-0 w-0 border-10 border-b-0 border-solid border-r-transparent border-l-transparent"></span>
       </p>
-      <ScaleLoader
-        className={`*:from-primary *:to-base-content cursor-pointer *:bg-linear-to-t ${isPlaying ? "" : "playerAnimationState"}`}
-        onClick={() => {
-          (setIsPlaying(!isPlaying), setToolTipVisibility(false));
-        }}
-        color="var(--color-primary)"
-        size={150}
-      />
+      <div>
+        <ScaleLoader
+          className={`*:from-primary *:to-base-content cursor-pointer *:bg-linear-to-t ${isPlaying ? "" : "playerAnimationState"}`}
+          onClick={() => {
+            (setIsPlaying(!isPlaying), setToolTipVisibility(false));
+          }}
+          color="var(--color-primary)"
+          size={150}
+        />
+      </div>
     </div>
   );
 };
