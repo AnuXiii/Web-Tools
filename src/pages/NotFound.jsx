@@ -14,7 +14,12 @@ const NotFound = () => {
           <ArrowBigLeft />
           <span>Back to home</span>
         </a>
-        <img src={notFoundImg} alt="not found image" className="size-full" />
+        <img
+          src={notFoundImg}
+          alt="not found image"
+          className="size-full"
+          loading="lazy"
+        />
       </div>
     </section>
   );

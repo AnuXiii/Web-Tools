@@ -39,13 +39,6 @@ const TryModal = ({ onClose }) => {
     document.body.classList.remove("overflow-hidden");
   };
 
-  // close modal when click on modal
-  const handleCloseModal = () => {
-    history.go(-2);
-    onClose();
-    document.body.classList.remove("overflow-hidden");
-  };
-
   // use effect when modal rendered
   useEffect(() => {
     history.pushState({ name: "try-modal" }, null, "/try-modal");
@@ -60,7 +53,7 @@ const TryModal = ({ onClose }) => {
 
   return (
     <div
-      onClick={(e) => e.target.role === "dialog" && handleCloseModal()}
+      onClick={(e) => e.target.role === "dialog" && handlePopState()}
       role="dialog"
       className="from-base-300 via-base-300 flex-center to-base-300/50 animate-fade-up fixed inset-0 z-60 bg-linear-to-t p-4 backdrop-blur-md"
     >
@@ -73,7 +66,7 @@ const TryModal = ({ onClose }) => {
             text=""
             background="bg-error"
             icon={X}
-            onClick={() => handleCloseModal()}
+            onClick={() => handlePopState()}
             customClasses={
               "border-b-3 border-base-content/20 bg-error text-white hover:bg-error hover:opacity-90 px-3! py-2.5!"
             }
