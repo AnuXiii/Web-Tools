@@ -95,7 +95,7 @@ const MusicPlayer = () => {
   return (
     <div className="flex-center fixed right-5 bottom-5 z-40 flex-col">
       <p
-        className={`border-base-content/30 bg-base-300 text-base-content absolute right-1 bottom-15 mx-auto translate-y-2 rounded-lg border p-2 text-center text-nowrap opacity-0 duration-200 ${tooltipVisibility ? "animate-fade-up pointer-events-auto" : "animate-fade-down pointer-events-none"}`}
+        className={`border-base-content/30 bg-base-300 text-base-content absolute right-0 bottom-15 mx-auto translate-y-2 rounded-lg border p-2 text-center text-nowrap opacity-0 duration-200 ${tooltipVisibility ? "animate-fade-up pointer-events-auto" : "animate-fade-down pointer-events-none"}`}
       >
         <span className="flex-center gap-1">
           <span>tap to play music</span>
@@ -106,7 +106,7 @@ const MusicPlayer = () => {
             <X />
           </i>
         </span>
-        <span className="border-base-content absolute right-3 -bottom-[11px] z-[-1] h-0 w-0 border-10 border-b-0 border-solid border-r-transparent border-l-transparent"></span>
+        <span className="border-base-content absolute right-2.5 -bottom-[11px] z-[-1] h-0 w-0 border-10 border-b-0 border-solid border-r-transparent border-l-transparent"></span>
       </p>
       <div>
         <ScaleLoader

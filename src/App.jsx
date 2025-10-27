@@ -7,7 +7,6 @@ import Footer from "./layouts/Footer";
 import Hero from "./components/Hero";
 import Loader from "./components/Loader";
 import { ToastContainer } from "react-toastify";
-import "react-toastify/ReactToastify.css";
 import MusicPlayer from "./components/MusicPlayer";
 
 const App = () => {
@@ -107,7 +106,15 @@ const App = () => {
         <Main>{getComponent(currentPath)}</Main>
       </Suspense>
       <Footer />
-      <ToastContainer />
+      <ToastContainer
+        autoClose={3000}
+        hideProgressBar={true}
+        pauseOnHover={false}
+        draggable
+        theme="colored"
+        className={"cursor-grab font-semibold select-none"}
+        newestOnTop
+      />
       <MusicPlayer />
     </div>
   );

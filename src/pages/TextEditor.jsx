@@ -3,12 +3,20 @@ import defaultData from "../assets/document/default-data.txt";
 import { toast } from "react-toastify";
 import Loader from "../components/Loader";
 import Button from "../components/Button";
-import { FileCode, FileType, Link, Scaling } from "lucide-react";
+import {
+  ArrowDownToLine,
+  FileCode,
+  FileType,
+  Link,
+  Play,
+  Scaling,
+} from "lucide-react";
+import { useMediaQuery } from "react-responsive";
 
 // text area component
 const TextArea = ({ hasUploaded, onTextChange, isUploading }) => {
   const [text, setText] = useState("");
-  const [status, setStatus] = useState("idle");
+  const [status, setStatus] = useState("loading");
   const hasFetched = useRef(false);
 
   // check data is uploaded
@@ -23,27 +31,34 @@ const TextArea = ({ hasUploaded, onTextChange, isUploading }) => {
     hasFetched.current = true;
 
     const loadText = async () => {
-      setStatus("loading");
+      const promise = new Promise(async (resolve, reject) => {
+        try {
+          const savedValue = sessionStorage.textEditorValue;
+          if (savedValue) {
+            setText(savedValue);
+            setStatus("success");
+            resolve("Loaded from session storage");
+            return;
+          }
 
-      const savedValue = sessionStorage.textEditorValue;
+          const res = await fetch(defaultData);
+          if (!res.ok) throw new Error("Can't fetch data");
 
-      if (savedValue) {
-        setText(savedValue);
-        setStatus("success");
-        return;
-      }
+          const data = await res.text();
+          setText(data);
+          setStatus("success");
+          resolve("Default data loaded");
+        } catch (error) {
+          setStatus("error");
+          reject(error);
+        }
+      });
 
-      try {
-        const res = await fetch(defaultData);
-        if (!res.ok) throw new Error("Can't fetch data");
-        const data = await res.text();
-        setText(data);
-        setStatus("success");
-      } catch (error) {
-        toast.error(`${error.message}`);
-        setText("Can't load default data");
-        setStatus("error");
-      }
+      toast.promise(promise, {
+        pending: "Loading default data...",
+        success: "Default data loaded",
+        error: "Can't load default data",
+      });
     };
 
     loadText();
@@ -51,7 +66,14 @@ const TextArea = ({ hasUploaded, onTextChange, isUploading }) => {
 
   // track textarea value changed
   useEffect(() => {
-    sessionStorage.textEditorValue = text;
+    try {
+      sessionStorage.textEditorValue = text;
+    } catch (error) {
+      toast.error("File size exceeds the allowed limit");
+      setText("");
+      console.log(error.message);
+    }
+
     onTextChange(text);
   }, [text, onTextChange]);
 
@@ -75,6 +97,8 @@ const TextArea = ({ hasUploaded, onTextChange, isUploading }) => {
 
 // actions component used for controling upload, run and download file
 const Actions = ({ onFileUpload, onRun, onFileDonwload }) => {
+  const isMobile = useMediaQuery({ query: "(max-width: 40rem)" });
+
   // change file handler
   const handleChange = (e) => {
     onFileUpload(e.target.files[0]);
@@ -101,16 +125,18 @@ const Actions = ({ onFileUpload, onRun, onFileDonwload }) => {
         />
       </label>
       {/*  */}
-      <div className="flex-center gap-3 max-sm:flex-col max-sm:*:w-full max-sm:*:py-2! max-sm:*:text-lg">
+      <div className="flex-center gap-3">
         {/*  */}
         <Button
-          text="Run"
+          text={!isMobile && "Run"}
+          icon={isMobile && Play}
           onClick={() => onRun()}
           customClasses={"bg-primary text-primary-content p-3!"}
         />
         {/*  */}
         <Button
-          text="Save file"
+          text={!isMobile && "Save file"}
+          icon={isMobile && ArrowDownToLine}
           onClick={() => onFileDonwload()}
           customClasses={
             "bg-neutral text-white border-base-content/30 border p-3!"
@@ -144,26 +170,45 @@ const TextEditor = () => {
     const file = fileUrl;
     if (!file) return;
 
-    try {
+    const MAX_FILE_SIZE = 1024 * 4; // 4 MB
+
+    // check file size
+    if (file.size / 1024 > MAX_FILE_SIZE) {
+      toast.error("File size exceeds the allowed limit");
+      return;
+    }
+    // check file type
+    if (!file.type.startsWith("text")) {
+      toast.error("Incorrect file format");
+      return;
+    }
+
+    const promise = new Promise((resolve, reject) => {
       setIsUploading(true);
+      sessionStorage.textEditorValue = "";
+
       const reader = new FileReader();
 
       reader.onload = () => {
-        setUploadedText(reader.result);
         setIsUploading(false);
+        setUploadedText(reader.result);
+        resolve("File uploaded successfully");
       };
 
       reader.onerror = () => {
-        toast.error("Error when converted file");
         setIsUploading(false);
+        reject("Error reading file");
         reader.abort();
       };
 
       reader.readAsText(file);
-    } catch (error) {
-      toast.error(error.message);
-      setIsUploading(false);
-    }
+    });
+
+    toast.promise(promise, {
+      pending: "Uploading file",
+      success: "File uploaded successfully",
+      error: "Error while uploading file",
+    });
   };
 
   const handleRunFile = async () => {
@@ -172,20 +217,29 @@ const TextEditor = () => {
       return;
     }
 
-    try {
-      setIsPreviewLoading(true);
+    const promise = new Promise((resolve, reject) => {
+      try {
+        setIsPreviewLoading(true);
+        if (fileToRun) URL.revokeObjectURL(fileToRun);
 
-      if (fileToRun) URL.revokeObjectURL(fileToRun);
+        const blob = new Blob([textContent], {
+          type: `text/${previewFormat}`,
+        });
+        const url = URL.createObjectURL(blob);
+        setFileToRun(url);
+        setIsPreviewLoading(false);
+        resolve();
+      } catch (error) {
+        setIsPreviewLoading(false);
+        reject(error);
+      }
+    });
 
-      const blob = new Blob([textContent], {
-        type: `text/${previewFormat}`,
-      });
-      const url = URL.createObjectURL(blob);
-      setFileToRun(url);
-    } catch (error) {
-      toast.error(error.message);
-      setIsPreviewLoading(false);
-    }
+    toast.promise(promise, {
+      pending: "Generating preview...",
+      success: "Preview ready 🎉",
+      error: "Failed to generate preview",
+    });
   };
 
   useEffect(() => {
@@ -200,6 +254,11 @@ const TextEditor = () => {
   }, [previewFormat]);
 
   const handleFileDownload = () => {
+    if (!textContent) {
+      toast.error("No file to donwload");
+      return;
+    }
+
     const blob = new Blob([textContent], { type: `text/${downloadFormat}` });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");

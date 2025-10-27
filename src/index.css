@@ -2,9 +2,17 @@
 @import "tailwindcss";
 @import "./css/animations.css";
 
-/* root default theme */
 :root {
-  color-scheme: dark;
+  /* override toastify alerts colors */
+  --toastify-color-info: var(--color-info);
+  --toastify-color-success: var(--color-success);
+  --toastify-color-warning: var(--color-warning);
+  --toastify-color-error: var(--color-error);
+
+  --toastify-text-color-info: var(--color-white);
+  --toastify-text-color-success: var(--color-white);
+  --toastify-text-color-warning: var(--color-neutral);
+  --toastify-text-color-error: var(--color-white);
 }
 
 @theme {
