@@ -5,15 +5,21 @@ import Logo from "./Logo";
 const Navbar = ({ isOpen, onNavigate }) => {
   const [activePath, setActivePath] = useState(location.pathname);
 
-  // highlight active path when pop state
+  // highlight active path
   useEffect(() => {
+    const handleRouteChange = (e) => {
+      setActivePath(e.detail);
+    };
+
     const handlePopState = () => {
       setActivePath(location.pathname);
     };
 
+    window.addEventListener("route-change", handleRouteChange);
     window.addEventListener("popstate", handlePopState);
 
     return () => {
+      window.removeEventListener("route-change", handleRouteChange);
       window.removeEventListener("popstate", handlePopState);
     };
   });

@@ -36,18 +36,17 @@ const TryModal = ({ onClose }) => {
   const handlePopState = () => {
     history.back();
     onClose();
-    document.body.classList.remove("overflow-hidden");
   };
 
-  // use effect when modal rendered
   useEffect(() => {
-    history.pushState({ name: "try-modal" }, null, "/try-modal");
+    history.pushState({}, null, "/");
     document.body.classList.add("overflow-hidden");
 
     window.addEventListener("popstate", handlePopState);
 
     return () => {
       window.removeEventListener("popstate", handlePopState);
+      document.body.classList.remove("overflow-hidden");
     };
   });
 

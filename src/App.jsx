@@ -12,43 +12,28 @@ import MusicPlayer from "./components/MusicPlayer";
 const App = () => {
   // app name
   const appName = "Web Tools";
-  // keep save current path state
   const [currentPath, setCurrentPath] = useState(location.pathname);
-
-  // check user if not in modal path
-  if (history.state) {
-    if (history.state.name.includes("modal")) {
-      location.pathname = "/";
-    }
-  }
 
   // find jsx component by path
   const getComponent = (path) => {
     const route = routes.find((r) => r.path === path);
 
     if (path === "/" || path === "/home") {
-      document.title = `${appName} | Home`;
       return <Hero />;
     } else if (route && route.component) {
-      document.title = `${appName} | ${route.name}`;
       const Component = route.component;
       return <Component />;
     } else {
-      document.title = `${appName} | Not found 404`;
       return <NotFound />;
     }
   };
 
-  // set active class to current path
-  const setActivePath = (path) => {
-    const currentPath = "nav ul li [data-route].active-path";
-    const newPath = `nav ul li [data-route="${path}"]`;
-
-    if (currentPath && newPath) {
-      document.querySelector(currentPath)?.classList.remove("active-path");
-      document.querySelector(newPath)?.classList.add("active-path");
-    }
-  };
+  useEffect(() => {
+    const route = routes.find((r) => r.path === currentPath);
+    document.title = route
+      ? `${appName} | ${route.name}`
+      : `${appName} : Not Found 404`;
+  }, [currentPath]);
 
   // handle click on link by data-route
   useEffect(() => {
@@ -62,34 +47,29 @@ const App = () => {
       // save current path scroll position
       history.scrollRestoration = "auto";
 
-      if (history.state) {
-        // prevent push same state just replace the path to history
-        if (history.state.name === newPath) {
-          history.replaceState({ name: newPath }, "", newPath);
-          return;
-        }
-      }
+      // prevent push same state just replace the path to history
+      if (history.state?.name === newPath) return;
 
       // push new state to history
       history.pushState({ name: newPath }, "", newPath);
       setCurrentPath(newPath);
-      setActivePath(target.dataset.route);
+
+      window.dispatchEvent(
+        new CustomEvent("route-change", { detail: newPath }),
+      );
     };
 
     document.addEventListener("click", handleLinkClick);
-
     return () => {
       document.removeEventListener("click", handleLinkClick);
     };
-  });
+  }, []);
 
   // handle (back / forward) button on browser
   useEffect(() => {
     const handlePopState = () => {
-      const route = routes.find((r) => r.path === location.pathname);
-      if (!route) return;
-      setCurrentPath(route.path);
-      setActivePath(route.path);
+      const path = location.pathname;
+      setCurrentPath(path);
     };
 
     window.addEventListener("popstate", handlePopState);
@@ -97,7 +77,7 @@ const App = () => {
     return () => {
       window.removeEventListener("popstate", handlePopState);
     };
-  });
+  }, []);
 
   return (
     <div role="application" className="overflow-hidden">

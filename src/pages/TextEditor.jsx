@@ -337,10 +337,32 @@ const TextEditor = () => {
                   <iframe
                     src={fileToRun}
                     title="preview"
-                    className="*:text-base-content! h-full w-full"
+                    className="h-full w-full text-white *:text-white"
                     onLoad={(e) => {
                       setIsPreviewLoading(false);
                       e.target.scrollIntoView({ block: "end" });
+                      {
+                        const styles = document.createElement("style");
+                        styles.textContent = `
+                          html {
+                            color-scheme: dark light;
+                            animation: fade-in 0.5s linear forwards;
+                          }
+                          body {
+                            padding: 0.5rem;
+                            font-family: sans-serif;
+                            line-height: 1.6rem;
+                          }
+                          @keyframes fade-in{
+                            from{
+                              opacity: 0;
+                            }
+                            to{
+                              opacity: 1;
+                            }
+                          }`;
+                        e.target.contentDocument.head.appendChild(styles);
+                      }
                     }}
                   ></iframe>
                 </div>
