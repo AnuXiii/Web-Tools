@@ -1,16 +1,16 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
 import Loader from "../../components/Loader";
-import Button from "../../components/Button";
 import { FileCode, FileScan } from "lucide-react";
 import fileReader from "../../utils/fileReader";
-import UploadEncode from "./UploadEncode";
+import EncodeArea from "./EncodeArea";
 import DecodeArea from "./DecodeArea";
 import ResultView from "./ResultView";
 import ActionZone from "./ActionZone";
+import base64ToBlob from "../../utils/base64ToBlob";
 
 const FileEncoder = () => {
-  const [mode, setMode] = useState("decode");
+  const [mode, setMode] = useState("encode");
   const [fileMetaData, setFileMetaData] = useState({
     fileName: null,
     fileType: null,
@@ -22,6 +22,7 @@ const FileEncoder = () => {
   const [copying, setCopying] = useState(false);
   const [decodeInput, setDecodeInput] = useState("");
   const [decoding, setDecoding] = useState(false);
+  const [decodeObjectUrl, setDecodeObjectUrl] = useState(null);
 
   const base64Ref = useRef(null);
 
@@ -29,6 +30,32 @@ const FileEncoder = () => {
   const MAX_PREVIEW_THRESHOLD = 10000;
   const VALID_FORMATS = ["image", "audio", "video"];
 
+  /**
+   * @param {Boolean} isUploading true | false
+   */
+  const stateResetor = (isUploading) => {
+    setFileMetaData({ fileName: null, fileType: null });
+    setUploading(isUploading);
+    setDecodeInput("");
+
+    if (decodeObjectUrl) {
+      URL.revokeObjectURL(decodeObjectUrl);
+      setDecodeObjectUrl(null);
+    }
+
+    setTimeout(() => {
+      setResult(null);
+      setShowMore(false);
+
+      if (base64Ref.current) {
+        base64Ref.current = null;
+      }
+    }, 0);
+  };
+
+  /**
+   * @param {File} fileObject
+   */
   const handleFileUpload = async (fileObject) => {
     if (!fileObject) {
       toast.error("No file selected");
@@ -36,37 +63,63 @@ const FileEncoder = () => {
     }
 
     const file = fileObject;
-    const isValidFormat = VALID_FORMATS.some((type) =>
-      file.type.startsWith(type),
-    );
-    if (!isValidFormat) {
-      toast.error("Invalid file format");
-      return;
-    }
-
-    if (file.size / 1024 > MAX_FILE_SIZE) {
-      toast.error("File size exceeds the allowed limit");
-      return;
-    }
-
-    setUploading(true);
-    setFileMetaData({ fileName: null, fileType: null });
-    setResult("");
-    setShowMore(false);
-    base64Ref.current = null;
 
     try {
-      const res = await fileReader(
-        file,
-        "dataURL",
-        "Uploading file",
-        "File uploaded successfully",
-        "Error while uploading file",
-      );
+      if (mode === "encode") {
+        const isValidFormat = VALID_FORMATS.some((type) =>
+          file.type.startsWith(type),
+        );
 
-      base64Ref.current = await res.base64String;
-      setFileMetaData({ fileName: res.fileName, fileType: res.fileType });
-      handleEncode();
+        if (!isValidFormat) {
+          toast.error("Invalid file format");
+          return;
+        }
+
+        if (file.size / 1024 > MAX_FILE_SIZE) {
+          toast.error("File size exceeds the allowed limit");
+          return;
+        }
+
+        stateResetor(true);
+
+        const response = await fileReader(
+          file,
+          "dataURL",
+          "Uploading file",
+          "File uploaded successfully",
+          "Error while uploading file",
+        );
+
+        base64Ref.current = response.base64String;
+        setFileMetaData({
+          fileName: response.fileName,
+          fileType: response.fileType,
+        });
+        handleEncode();
+      } else if (mode === "decode") {
+        if (file.type !== "text/plain" && !file.name.endsWith(".txt")) {
+          toast.error("Please upload .txt file format");
+          return;
+        }
+
+        if (file.size / 1024 > MAX_FILE_SIZE) {
+          toast.error("File size exceeds the allowed limit");
+          return;
+        }
+
+        stateResetor(true);
+
+        const response = await fileReader(
+          file,
+          "text",
+          "Uploading file",
+          "File uploaded successfully",
+          "Error while uploading file",
+        );
+
+        base64Ref.current = response.base64String;
+        handleDecode("fromUpload");
+      }
     } catch (error) {
       toast.error(error.message);
     } finally {
@@ -82,75 +135,80 @@ const FileEncoder = () => {
     setResult(base64Ref.current);
   }, []);
 
-  const handleDecode = useCallback(() => {
-    if (!decodeInput) {
-      toast.error("Please upload or enter Base64 string");
-      return;
-    }
+  /**
+   * @param from from ? fromInput | fromUpload
+   */
+  const handleDecode = useCallback(
+    (from = "fromInput") => {
+      let inputString = "";
 
-    setDecoding(true);
+      if (from === "fromUpload") {
+        inputString = base64Ref.current;
+      } else {
+        inputString = decodeInput;
+      }
 
-    try {
-      const parts = decodeInput.split(",");
-      if (parts.length !== 2 || !parts[0].startsWith("data:")) {
-        toast.error("Invalid Base64 format");
+      if (!inputString) {
+        toast.error("Please upload or enter Base64 string");
         return;
       }
 
-      const dataUrlPrefix = parts[0];
-      const base64String = decodeInput;
-      const mimeMatch = dataUrlPrefix.match(
-        /data:([a-zA-Z0-9]+\/[a-zA-Z0-9\-\\.]+);?base64/,
-      );
-      const fileType = mimeMatch ? mimeMatch[1] : "";
-      if (!fileType) {
-        toast.error("unsupported file type");
-        return;
+      setDecoding(true);
+      base64Ref.current = inputString;
+
+      try {
+        const { objectUrl, fileType } = base64ToBlob(inputString);
+
+        if (!fileType) {
+          toast.error("Unsupported file type");
+          return;
+        }
+
+        // set file metadata and render it to dom
+        setFileMetaData({ fileName: "decoded_file", fileType: fileType });
+        setDecodeObjectUrl(objectUrl);
+
+        // render result as media file
+        const renderers = {
+          image: (src) => (
+            <img
+              src={src}
+              alt="result"
+              className="mx-auto rounded-lg object-cover"
+            />
+          ),
+          audio: (src) => (
+            <audio
+              controls
+              src={src}
+              preload="metadata"
+              className="mx-auto w-full"
+            />
+          ),
+          video: (src) => (
+            <video
+              controls
+              src={src}
+              preload="metadata"
+              className="mx-auto aspect-video w-full"
+            />
+          ),
+        };
+
+        const type = Object.keys(renderers).find((t) => fileType.includes(t));
+        if (!type) {
+          toast.error(`File format ${fileType} is not supported for rendering`);
+          return;
+        }
+        setResult(renderers[type](objectUrl));
+      } catch {
+        toast.error("Error when processing");
+      } finally {
+        setDecoding(false);
       }
-
-      setFileMetaData({ fileName: "decoded_file", fileType: fileType });
-
-      const renderers = {
-        image: (src) => (
-          <img
-            src={src}
-            alt="result"
-            className="mx-auto rounded-lg object-cover"
-          />
-        ),
-        audio: (src) => (
-          <audio
-            controls
-            src={src}
-            preload="metadata"
-            className="mx-auto w-full"
-          />
-        ),
-        video: (src) => (
-          <video
-            controls
-            src={src}
-            preload="metadata"
-            className="mx-auto aspect-video w-full"
-          />
-        ),
-      };
-
-      const type = Object.keys(renderers).find((t) => fileType.includes(t));
-      if (!type) {
-        toast.error(`File format ${fileType} is not supported`);
-        return;
-      }
-
-      base64Ref.current = base64String;
-      setResult(renderers[type](base64String));
-      setDecodeInput("");
-    } catch (error) {
-      toast.error("Error when processing" + error.message);
-    } finally {
-      setDecoding(false);
-    }
-  }, [decodeInput]);
+    },
+    [decodeInput, setDecodeObjectUrl],
+  );
 
   const handleFileDownload = async () => {
     if (!base64Ref.current) {
@@ -171,10 +229,10 @@ const FileEncoder = () => {
       setTimeout(() => setDownloading(false), 200);
     } else if (mode === "decode") {
       const { fileName, fileType } = fileMetaData;
-      const dataURL = base64Ref.current;
-      const format = fileType.split("/")[1] || "bin";
+      const format = fileType.split("/")[1] || "bin"; // export file format
+      const base64DataUrl = base64Ref.current;
       const a = document.createElement("a");
-      a.href = dataURL;
+      a.href = base64DataUrl;
       a.download = `${fileName}.${format}`;
       a.click();
       setTimeout(() => setDownloading(false), 200);
@@ -196,24 +254,11 @@ const FileEncoder = () => {
         toast.error("Copying text failed");
       }
     } catch (error) {
-      toast.error("Copy failed");
-      console.log(error.message);
+      toast.error("Copy failed" + error.message);
     } finally {
       setCopying(false);
     }
   };
-
-  useEffect(() => {
-    if (result) {
-      document.getElementById("result")?.scrollIntoView({ block: "end" });
-    }
-  }, [result]);
-
-  useEffect(() => {
-    if (showMore) {
-      document.getElementById("action-zone")?.scrollIntoView({ block: "end" });
-    }
-  }, [showMore]);
 
   useEffect(() => {
     if (mode !== "decode") return;
@@ -223,18 +268,14 @@ const FileEncoder = () => {
         handleDecode();
       }
     };
+
     document.addEventListener("keypress", handleDecodeOnKeyPress);
     return () =>
       document.removeEventListener("keypress", handleDecodeOnKeyPress);
   }, [mode, handleDecode]);
 
   useEffect(() => {
-    setFileMetaData({ fileName: null, fileType: null });
-    setResult("");
-    setUploading(false);
-    setShowMore(false);
-    setDecodeInput("");
-    base64Ref.current = null;
+    stateResetor(false);
   }, [mode]);
 
   return (
@@ -255,7 +296,7 @@ const FileEncoder = () => {
           {uploading ? (
             <Loader />
           ) : (
-            <div>
+            <div className="space-y-10">
               <div className="space-y-5">
                 <div
                   className="flex-center w-max cursor-pointer justify-start gap-3 select-none"
@@ -278,7 +319,7 @@ const FileEncoder = () => {
                 </div>
                 <div className="min-h-[30lvh]">
                   {mode === "encode" ? (
-                    <UploadEncode
+                    <EncodeArea
                       uploading={uploading}
                       onUploadFile={handleFileUpload}
                     />
@@ -296,7 +337,9 @@ const FileEncoder = () => {
               </div>
               {result && (
                 <div id="result" className="space-y-5">
-                  <h2 className="text-2xl font-semibold">Result :</h2>
+                  <h2 className="text-2xl font-semibold">
+                    {mode === "encode" ? "Result :" : "Short Preview"}
+                  </h2>
                   <ResultView
                     mode={mode}
                     result={result}

@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
 import Loader from "../../components/Loader";
 import defaultData from "../../assets/document/default-data.txt";
+import PropTypes from "prop-types";
 
 const TextArea = ({ hasUploaded, onTextChange, isUploading }) => {
   const [text, setText] = useState("");
@@ -69,10 +70,17 @@ const TextArea = ({ hasUploaded, onTextChange, isUploading }) => {
           value={text}
           onChange={(e) => setText(e.target.value)}
           className="text-base-content/80 max-h-100 min-h-[30lvh] w-full border-none outline-none placeholder:opacity-50"
+          onPaste={(e) => console.log(e)}
         ></textarea>
       )}
     </>
   );
+};
+
+TextArea.propTypes = {
+  hasUploaded: PropTypes.string,
+  onTextChange: PropTypes.func,
+  isUploading: PropTypes.bool,
 };
 
 export default TextArea;

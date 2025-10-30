@@ -1,6 +1,6 @@
-import Button from "../../components/Button";
+import PropTypes from "prop-types";
 
-const UploadEncode = ({ uploading, onUploadFile }) => {
+const EncodeArea = ({ uploading, onUploadFile }) => {
   return (
     <div className="animate-fade-up">
       <label
@@ -39,4 +39,9 @@ const UploadEncode = ({ uploading, onUploadFile }) => {
   );
 };
 
-export default UploadEncode;
+EncodeArea.propTypes = {
+  uploading: PropTypes.bool,
+  onUploadFile: PropTypes.func,
+};
+
+export default EncodeArea;

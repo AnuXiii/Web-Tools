@@ -2,6 +2,7 @@ import { Dot, X } from "lucide-react";
 import { features } from "../constants";
 import Button from "./Button";
 import { useEffect } from "react";
+import PropTypes from "prop-types";
 
 // render app tools
 const renderTools = () => {
@@ -80,4 +81,9 @@ const TryModal = ({ onClose }) => {
     </div>
   );
 };
+
+TryModal.propTypes = {
+  onClose: PropTypes.func,
+};
+
 export default TryModal;

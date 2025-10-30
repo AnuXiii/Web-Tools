@@ -1,3 +1,4 @@
+import PropTypes from "prop-types";
 import Button from "../../components/Button";
 import { Download, Copy } from "lucide-react";
 
@@ -20,6 +21,14 @@ const ActionZone = ({ mode, downloading, onDownload, copying, onCopy }) => {
       )}
     </div>
   );
+};
+
+ActionZone.propTypes = {
+  mode: PropTypes.string,
+  downloading: PropTypes.bool,
+  onDownload: PropTypes.func,
+  copying: PropTypes.bool,
+  onCopy: PropTypes.func,
 };
 
 export default ActionZone;

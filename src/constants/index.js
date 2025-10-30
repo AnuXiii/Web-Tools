@@ -7,7 +7,7 @@ import {
   Globe,
   HomeIcon,
   Instagram,
-  UploadCloud,
+  ListTodo,
 } from "lucide-react";
 import { lazy } from "react";
 
@@ -18,7 +18,7 @@ const routes = [
     component: lazy(() => import("../components/Hero")),
   },
   {
-    name: "Text editor",
+    name: "Text Editor",
     path: "/text-editor",
     component: lazy(() => import("../pages/TextEditor/page")),
   },
@@ -33,7 +33,7 @@ const routes = [
     // content : FileUploader,
   },
   {
-    name: "Data viewer",
+    name: "Data Viewer",
     path: "/data-viewer",
     // content : DataViewer
   },
@@ -75,14 +75,14 @@ const features = [
   {
     name: "Todo App",
     path: "/todo-app",
-    icon: UploadCloud,
+    icon: ListTodo,
     colors: {
       textColor: "var(--color-accent)",
       borderColor: "var(--color-accent-content)",
     },
   },
   {
-    name: "Data viewer",
+    name: "Data Viewer",
     path: "/data-viewer",
     icon: Database,
     colors: {

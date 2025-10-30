@@ -1,3 +1,4 @@
+import PropTypes from "prop-types";
 import { BarLoader } from "react-spinners";
 
 const override = {
@@ -7,7 +8,7 @@ const override = {
   margin: "0 auto",
 };
 
-const Loader = ({ loading }) => {
+const Loader = ({ loading, text = "loading..." }) => {
   return (
     <div className="flex-center h-[10vh] flex-col gap-3 text-center">
       <BarLoader
@@ -16,8 +17,14 @@ const Loader = ({ loading }) => {
         cssOverride={override}
         size={150}
       />
-      <p>loading...</p>
+      <p>{text}</p>
     </div>
   );
 };
+
+Loader.propTypes = {
+  loading: PropTypes.bool,
+  text: PropTypes.string,
+};
+
 export default Loader;

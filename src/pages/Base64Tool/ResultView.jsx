@@ -1,4 +1,6 @@
+import { useEffect } from "react";
 import Button from "../../components/Button";
+import PropTypes from "prop-types";
 
 const ResultView = ({
   mode,
@@ -7,6 +9,18 @@ const ResultView = ({
   setShowMore,
   MAX_PREVIEW_THRESHOLD,
 }) => {
+  useEffect(() => {
+    if (result) {
+      document.getElementById("result")?.scrollIntoView({ block: "end" });
+    }
+  }, [result]);
+
+  useEffect(() => {
+    if (showMore) {
+      document.getElementById("action-zone")?.scrollIntoView({ block: "end" });
+    }
+  }, [showMore]);
+
   return (
     <>
       {mode === "encode" ? (
@@ -44,6 +58,14 @@ const ResultView = ({
       )}
     </>
   );
+};
+
+ResultView.propTypes = {
+  mode: PropTypes.string,
+  result: PropTypes.string,
+  showMore: PropTypes.bool,
+  setShowMore: PropTypes.func,
+  MAX_PREVIEW_THRESHOLD: PropTypes.number,
 };
 
 export default ResultView;

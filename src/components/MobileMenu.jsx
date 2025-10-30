@@ -1,4 +1,5 @@
 import { MenuIcon, XIcon } from "lucide-react";
+import PropTypes from "prop-types";
 
 const MobileMenu = ({ isOpen, onToggle }) => {
   document.body.classList.toggle("overflow-hidden", isOpen);
@@ -13,4 +14,10 @@ const MobileMenu = ({ isOpen, onToggle }) => {
     </button>
   );
 };
+
+MobileMenu.propTypes = {
+  isOpen: PropTypes.bool,
+  onToggle: PropTypes.func,
+};
+
 export default MobileMenu;

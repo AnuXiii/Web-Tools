@@ -1,3 +1,5 @@
+import PropTypes from "prop-types";
+
 const ResultView = ({ isPreviewLoading, fileToRun, setIsPreviewLoading }) => {
   return (
     <div className="flex-center relative mt-4 h-96 w-full flex-col border">
@@ -22,4 +24,11 @@ const ResultView = ({ isPreviewLoading, fileToRun, setIsPreviewLoading }) => {
     </div>
   );
 };
+
+ResultView.propTypes = {
+  isPreviewLoading: PropTypes.bool,
+  fileToRun: PropTypes.string,
+  setIsPreviewLoading: PropTypes.func,
+};
+
 export default ResultView;

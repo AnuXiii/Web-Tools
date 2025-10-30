@@ -1,5 +1,6 @@
 import Button from "../../components/Button";
 import { Play, ArrowDownToLine, Link } from "lucide-react";
+import PropTypes from "prop-types";
 import { useMediaQuery } from "react-responsive";
 
 const Actions = ({ onFileUpload, onRun, onFileDonwload, isRunning }) => {
@@ -45,6 +46,13 @@ const Actions = ({ onFileUpload, onRun, onFileDonwload, isRunning }) => {
       </div>
     </div>
   );
+};
+
+Actions.propTypes = {
+  onFileUpload: PropTypes.func,
+  onRun: PropTypes.func,
+  onFileDonwload: PropTypes.func,
+  isRunning: PropTypes.bool,
 };
 
 export default Actions;

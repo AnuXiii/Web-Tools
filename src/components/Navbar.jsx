@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { routes } from "../constants";
 import Logo from "./Logo";
+import PropTypes from "prop-types";
 
 const Navbar = ({ isOpen, onNavigate }) => {
   const [activePath, setActivePath] = useState(location.pathname);
@@ -36,7 +37,8 @@ const Navbar = ({ isOpen, onNavigate }) => {
               href={path}
               data-route={path}
               onClick={() => {
-                (setActivePath(path), onNavigate());
+                setActivePath(path);
+                onNavigate();
               }}
               className={`text-base-content hover:text-primary font-medium duration-200 ${activePath === path ? "active-path" : ""}`}
             >
@@ -47,6 +49,11 @@ const Navbar = ({ isOpen, onNavigate }) => {
       </ul>
     </nav>
   );
+};
+
+Navbar.propTypes = {
+  isOpen: PropTypes.bool,
+  onNavigate: PropTypes.func,
 };
 
 export default Navbar;

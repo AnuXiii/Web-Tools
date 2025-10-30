@@ -1,3 +1,4 @@
+import PropTypes from "prop-types";
 import logo from "/logo.png";
 
 const Logo = ({ isDesktop }) => {
@@ -18,4 +19,9 @@ const Logo = ({ isDesktop }) => {
     </>
   );
 };
+
+Logo.propTypes = {
+  isDesktop: PropTypes.bool,
+};
+
 export default Logo;
