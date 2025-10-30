@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import ReactDOM from "react-dom";
-import { features } from "../constants";
-import Button from "./Button";
+import { features } from "../../constants";
+import Button from "../../components/Button";
 import TryModal from "./TryModal";
 import { ExternalLink } from "lucide-react";
 

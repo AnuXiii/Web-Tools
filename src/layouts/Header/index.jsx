@@ -1,9 +1,9 @@
 import { useState } from "react";
-import Logo from "../components/Logo";
-import MobileMenu from "../components/MobileMenu";
-import Navbar from "../components/Navbar";
-import ShinyLine from "../components/ShinyLine";
-import ThemeToggle from "../components/ThemeToggle";
+import Logo from "./Logo";
+import MobileMenu from "./MobileMenu";
+import Navbar from "./Navbar";
+import ThemeToggle from "./ThemeToggle";
+import ShinyLine from "../../components/ShinyLine";
 
 const Header = () => {
   const [isOpen, setIsOpen] = useState(false);

@@ -1,13 +1,13 @@
 import { Suspense, useEffect, useState } from "react";
-import { routes } from "./constants";
-import NotFound from "./pages/NotFound/page";
+import routes from "./constants/routes";
+import NotFound from "./pages/NotFound";
 import Header from "./layouts/Header";
 import Main from "./layouts/Main";
 import Footer from "./layouts/Footer";
-import Hero from "./components/Hero";
+import Hero from "./pages/Hero";
 import Loader from "./components/Loader";
 import { ToastContainer } from "react-toastify";
-import MusicPlayer from "./components/MusicPlayer";
+import MusicPlayer from "./layouts/MusicPlayer";
 
 const App = () => {
   // app name

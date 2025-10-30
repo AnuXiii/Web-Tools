@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { routes } from "../constants";
+import routes from "../../constants/routes";
 import Logo from "./Logo";
 import PropTypes from "prop-types";
 

@@ -1,4 +1,4 @@
-import { socials } from "../constants";
+import { socials } from "../../constants";
 
 const Socials = () => {
   return (

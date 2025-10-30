@@ -9,40 +9,6 @@ import {
   Instagram,
   ListTodo,
 } from "lucide-react";
-import { lazy } from "react";
-
-const routes = [
-  {
-    name: "Home",
-    path: "/",
-    component: lazy(() => import("../components/Hero")),
-  },
-  {
-    name: "Text Editor",
-    path: "/text-editor",
-    component: lazy(() => import("../pages/TextEditor/page")),
-  },
-  {
-    name: "Base64 Tool",
-    path: "/base64-tool",
-    component: lazy(() => import("../pages/Base64Tool/page")),
-  },
-  {
-    name: "Todo App",
-    path: "/todo-app",
-    // content : FileUploader,
-  },
-  {
-    name: "Data Viewer",
-    path: "/data-viewer",
-    // content : DataViewer
-  },
-  {
-    name: "Contact",
-    path: "/contact",
-    // content : Contact
-  },
-];
 
 const features = [
   {
@@ -119,4 +85,4 @@ const socials = [
   },
 ];
 
-export { routes, features, socials };
+export { features, socials };

@@ -31,7 +31,7 @@ const ResultView = ({
             {result.length >= MAX_PREVIEW_THRESHOLD ? (
               <>
                 {[...result].slice(0, 300)}
-                <span className="bg-error absolute right-1/2 bottom-1/2 z-1 translate-1/2 rounded-lg p-3 text-white">
+                <span className="bg-error absolute right-1/2 bottom-1/2 z-1 w-max translate-1/2 rounded-lg p-3 text-white">
                   Data is too large for full preview
                 </span>
               </>

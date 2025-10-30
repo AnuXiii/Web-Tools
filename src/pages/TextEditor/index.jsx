@@ -37,7 +37,7 @@ const TextEditor = () => {
     }
 
     if (!file.type.startsWith("text")) {
-      toast.error("Unvalid file format");
+      toast.error("Invalid file format");
       return;
     }
 

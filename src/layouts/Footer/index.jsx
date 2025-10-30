@@ -1,5 +1,5 @@
-import ShinyLine from "../components/ShinyLine";
-import Socials from "../components/Socials";
+import ShinyLine from "../../components/ShinyLine";
+import Socials from "./Socials";
 
 const Footer = () => {
   return (

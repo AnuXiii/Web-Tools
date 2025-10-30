@@ -3,7 +3,6 @@ import { toast } from "react-toastify";
 import Loader from "../../components/Loader";
 import defaultData from "../../assets/document/default-data.txt";
 import PropTypes from "prop-types";
-import { Loader2 } from "lucide-react";
 
 const TextArea = ({ hasUploaded, onTextChange, isUploading }) => {
   const [text, setText] = useState("");
@@ -80,12 +79,9 @@ const TextArea = ({ hasUploaded, onTextChange, isUploading }) => {
     <>
       {status === "loading" || isUploading || isPasting ? (
         isPasting ? (
-          <div className="flex-center bg-base-100 text-base-content absolute inset-0 z-2 h-full gap-3">
-            <Loader2 className="animate-spin" />
-            <span>Pasting large text...</span>
-          </div>
+          <Loader spinLoader={true} />
         ) : (
-          <Loader />
+          <Loader spinLoader={true} text="loading saved data..." />
         )
       ) : (
         <textarea

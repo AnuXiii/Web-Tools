@@ -1,7 +1,8 @@
 import PropTypes from "prop-types";
 import Button from "../../components/Button";
-import { Loader2, ScanLine, Upload } from "lucide-react";
+import { ScanLine, Upload } from "lucide-react";
 import { useState } from "react";
+import Loader from "../../components/Loader";
 
 const DecodeArea = ({
   decodeInput,
@@ -33,12 +34,7 @@ const DecodeArea = ({
 
   return (
     <div className="border-base-content/20 bg-base-200 focus-within:border-base-content animate-fade-up relative overflow-hidden rounded-lg border border-solid">
-      {isPasting && (
-        <div className="flex-center bg-base-100 text-base-content absolute inset-0 z-2 gap-3">
-          <Loader2 className="animate-spin" />
-          <span>Pasting large text...</span>
-        </div>
-      )}
+      {isPasting && <Loader spinLoader={true} />}
       <textarea
         name="decode-input"
         id="decode-input"

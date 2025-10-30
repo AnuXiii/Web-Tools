@@ -1,5 +1,5 @@
 import { X } from "lucide-react";
-import backgroundMusic from "../assets/audios/background-music.mp3";
+import backgroundMusic from "../../assets/audios/background-music.mp3";
 import { useEffect, useRef, useState } from "react";
 import { ScaleLoader } from "react-spinners";
 
