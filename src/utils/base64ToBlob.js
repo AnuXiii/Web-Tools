@@ -12,7 +12,7 @@ function base64ToBlob(dataUrl) {
     /data:([a-zA-Z0-9]+\/[a-zA-Z0-9\-\/.]+);?base64/,
   );
   if (!mimeMatch || mimeMatch.length < 2) {
-    throw new Error("Invalid Base64 format");
+    throw new Error("Uploaded file has invalid Base64 string");
   }
   const fileType = mimeMatch[1];
 

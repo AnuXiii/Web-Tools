@@ -1,11 +1,9 @@
 import PropTypes from "prop-types";
 import Button from "../../components/Button";
-import { ScanLine, Upload } from "lucide-react";
-import Loader from "../../components/Loader";
+import { Loader2, ScanLine, Upload } from "lucide-react";
 import { useState } from "react";
 
 const DecodeArea = ({
-  decoding,
   decodeInput,
   setDecodeInput,
   onDecode,
@@ -36,8 +34,9 @@ const DecodeArea = ({
   return (
     <div className="border-base-content/20 bg-base-200 focus-within:border-base-content animate-fade-up relative overflow-hidden rounded-lg border border-solid">
       {isPasting && (
-        <div className="flex-center absolute inset-0 z-2 bg-white">
-          <Loader text="Pasting large text..." />
+        <div className="flex-center bg-base-100 text-base-content absolute inset-0 z-2 gap-3">
+          <Loader2 className="animate-spin" />
+          <span>Pasting large text...</span>
         </div>
       )}
       <textarea
@@ -47,15 +46,15 @@ const DecodeArea = ({
         className="text-base-content/80 h-42 w-full resize-none border-none p-3 text-lg outline-none placeholder:opacity-50"
         onChange={handleChange}
         value={decodeInput}
-        disabled={decoding || uploading || isPasting}
+        disabled={uploading || isPasting}
         onPaste={handlePaste}
       ></textarea>
       <div className="bg-base-300 border-base-content/20 flex justify-start gap-3 border-t border-solid p-3 max-sm:flex-col">
         <Button
-          text={decoding ? "Decoding..." : "Decode"}
-          icon={!decoding && ScanLine}
+          text={"Decode"}
+          icon={ScanLine}
           onClick={() => onDecode()}
-          customClasses={`bg-neutral text-white border-base-content/30 border ${decoding ? "pointer-events-none" : ""}`}
+          customClasses={"bg-neutral text-white border-base-content/30 border "}
         />
         <label htmlFor="upload-base64" className="cursor-pointer">
           <input

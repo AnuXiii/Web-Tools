@@ -3,11 +3,29 @@ import { toast } from "react-toastify";
 import Loader from "../../components/Loader";
 import defaultData from "../../assets/document/default-data.txt";
 import PropTypes from "prop-types";
+import { Loader2 } from "lucide-react";
 
 const TextArea = ({ hasUploaded, onTextChange, isUploading }) => {
   const [text, setText] = useState("");
   const [status, setStatus] = useState("loading");
+  const [isPasting, setIsPasting] = useState(false);
+
   const hasFetched = useRef(false);
+
+  const handlePaste = (e) => {
+    e.preventDefault();
+
+    setIsPasting(true);
+    const pastedText = e.clipboardData.getData("text");
+    processLargeAsyncText(pastedText);
+  };
+
+  const processLargeAsyncText = (text) => {
+    setTimeout(() => {
+      setText(text);
+      setIsPasting(false);
+    }, 0);
+  };
 
   useEffect(() => {
     if (!hasUploaded) return;
@@ -60,8 +78,15 @@ const TextArea = ({ hasUploaded, onTextChange, isUploading }) => {
 
   return (
     <>
-      {status === "loading" || isUploading ? (
-        <Loader />
+      {status === "loading" || isUploading || isPasting ? (
+        isPasting ? (
+          <div className="flex-center bg-base-100 text-base-content absolute inset-0 z-2 h-full gap-3">
+            <Loader2 className="animate-spin" />
+            <span>Pasting large text...</span>
+          </div>
+        ) : (
+          <Loader />
+        )
       ) : (
         <textarea
           id="textarea"
@@ -70,7 +95,7 @@ const TextArea = ({ hasUploaded, onTextChange, isUploading }) => {
           value={text}
           onChange={(e) => setText(e.target.value)}
           className="text-base-content/80 max-h-100 min-h-[30lvh] w-full border-none outline-none placeholder:opacity-50"
-          onPaste={(e) => console.log(e)}
+          onPaste={handlePaste}
         ></textarea>
       )}
     </>

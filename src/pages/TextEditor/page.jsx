@@ -124,7 +124,7 @@ const TextEditor = () => {
           </h1>
           <div>
             <div className="border-base-content/20 bg-base-200 focus-within:border-base-content rounded-lg border border-solid">
-              <div className="relative p-3">
+              <div className="relative min-h-[30lvh] p-3">
                 <TextArea
                   hasUploaded={uploadedText}
                   onTextChange={setTextContent}

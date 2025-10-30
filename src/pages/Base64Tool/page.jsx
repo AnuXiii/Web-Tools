@@ -9,7 +9,7 @@ import ResultView from "./ResultView";
 import ActionZone from "./ActionZone";
 import base64ToBlob from "../../utils/base64ToBlob";
 
-const FileEncoder = () => {
+const Base64Tool = () => {
   const [mode, setMode] = useState("encode");
   const [fileMetaData, setFileMetaData] = useState({
     fileName: null,
@@ -21,7 +21,6 @@ const FileEncoder = () => {
   const [downloading, setDownloading] = useState(false);
   const [copying, setCopying] = useState(false);
   const [decodeInput, setDecodeInput] = useState("");
-  const [decoding, setDecoding] = useState(false);
   const [decodeObjectUrl, setDecodeObjectUrl] = useState(null);
 
   const base64Ref = useRef(null);
@@ -33,25 +32,23 @@ const FileEncoder = () => {
   /**
    * @param {Boolean} isUploading true | false
    */
-  const stateResetor = (isUploading) => {
-    setFileMetaData({ fileName: null, fileType: null });
-    setUploading(isUploading);
-    setDecodeInput("");
+  const stateResetor = useCallback(
+    (isUploading) => {
+      setFileMetaData({ fileName: null, fileType: null });
+      setUploading(isUploading);
+      setDecodeInput("");
 
-    if (decodeObjectUrl) {
-      URL.revokeObjectURL(decodeObjectUrl);
-      setDecodeObjectUrl(null);
-    }
+      setTimeout(() => {
+        setResult(null);
+        setShowMore(false);
 
-    setTimeout(() => {
-      setResult(null);
-      setShowMore(false);
-
-      if (base64Ref.current) {
-        base64Ref.current = null;
-      }
-    }, 0);
-  };
+        if (base64Ref.current) {
+          base64Ref.current = null;
+        }
+      }, 0);
+    },
+    [setFileMetaData, setUploading, setDecodeInput],
+  );
 
   /**
    * @param {File} fileObject
@@ -107,15 +104,9 @@ const FileEncoder = () => {
           return;
         }
 
-        stateResetor(true);
+        setUploading(true);
 
-        const response = await fileReader(
-          file,
-          "text",
-          "Uploading file",
-          "File uploaded successfully",
-          "Error while uploading file",
-        );
+        const response = await fileReader(file, "text");
 
         base64Ref.current = response.base64String;
         handleDecode("fromUpload");
@@ -153,7 +144,6 @@ const FileEncoder = () => {
         return;
       }
 
-      setDecoding(true);
       base64Ref.current = inputString;
 
       try {
@@ -200,14 +190,15 @@ const FileEncoder = () => {
           toast.error(`File format ${fileType} is not supported for rendering`);
           return;
         }
+
         setResult(renderers[type](objectUrl));
-      } catch {
-        toast.error("Error when processing");
-      } finally {
-        setDecoding(false);
+        setDecodeInput("");
+        toast.success(`Decoded`);
+      } catch (error) {
+        toast.error(error.message);
       }
     },
-    [decodeInput, setDecodeObjectUrl],
+    [decodeInput],
   );
 
   const handleFileDownload = async () => {
@@ -276,7 +267,15 @@ const FileEncoder = () => {
 
   useEffect(() => {
     stateResetor(false);
-  }, [mode]);
+  }, [mode, stateResetor]);
+
+  useEffect(() => {
+    if (decodeObjectUrl) {
+      return () => {
+        URL.revokeObjectURL(decodeObjectUrl);
+      };
+    }
+  }, [decodeObjectUrl]);
 
   return (
     <section id="file-encoder" className="w-full">
@@ -325,7 +324,6 @@ const FileEncoder = () => {
                     />
                   ) : (
                     <DecodeArea
-                      decoding={decoding}
                       decodeInput={decodeInput}
                       setDecodeInput={setDecodeInput}
                       onDecode={handleDecode}
@@ -337,9 +335,7 @@ const FileEncoder = () => {
               </div>
               {result && (
                 <div id="result" className="space-y-5">
-                  <h2 className="text-2xl font-semibold">
-                    {mode === "encode" ? "Result :" : "Short Preview"}
-                  </h2>
+                  <h2 className="text-2xl font-semibold">Result :</h2>
                   <ResultView
                     mode={mode}
                     result={result}
@@ -364,4 +360,4 @@ const FileEncoder = () => {
   );
 };
 
-export default FileEncoder;
+export default Base64Tool;

@@ -1,4 +1,3 @@
-import PropTypes from "prop-types";
 import { toast } from "react-toastify";
 
 /**
@@ -8,7 +7,7 @@ import { toast } from "react-toastify";
  * @param {string} success - success toast message
  * @param {string} error - error toast message
  * @param {Function} onProgress - progress.callback
- * @returns a object with base64String - file name - file type
+ * @returns {object}
  */
 
 function fileReader(file, readMethod, pending, success, error, onProgress) {
