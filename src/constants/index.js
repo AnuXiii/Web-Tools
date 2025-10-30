@@ -20,16 +20,16 @@ const routes = [
   {
     name: "Text editor",
     path: "/text-editor",
-    component: lazy(() => import("../pages/TextEditor")),
+    component: lazy(() => import("../pages/TextEditor/page")),
   },
   {
-    name: "File encoder",
-    path: "/file-encoder",
-    // content : FileEncoder,
+    name: "Base64 Tool",
+    path: "/base64-tool",
+    component: lazy(() => import("../pages/Base64Tool/page")),
   },
   {
-    name: "File uploader",
-    path: "/file-uploader",
+    name: "Todo App",
+    path: "/todo-app",
     // content : FileUploader,
   },
   {
@@ -64,8 +64,8 @@ const features = [
     },
   },
   {
-    name: "File encoder",
-    path: "/file-encoder",
+    name: "Base64 Tool",
+    path: "/base64-tool",
     icon: FileCode,
     colors: {
       textColor: "var(--color-success)",
@@ -73,8 +73,8 @@ const features = [
     },
   },
   {
-    name: "File uploader",
-    path: "/file-uploader",
+    name: "Todo App",
+    path: "/todo-app",
     icon: UploadCloud,
     colors: {
       textColor: "var(--color-accent)",

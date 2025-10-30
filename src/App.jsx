@@ -1,6 +1,6 @@
 import { Suspense, useEffect, useState } from "react";
 import { routes } from "./constants";
-import NotFound from "./pages/NotFound";
+import NotFound from "./pages/NotFound/page";
 import Header from "./layouts/Header";
 import Main from "./layouts/Main";
 import Footer from "./layouts/Footer";
@@ -50,8 +50,12 @@ const App = () => {
       // prevent push same state just replace the path to history
       if (history.state?.name === newPath) return;
 
-      // push new state to history
-      history.pushState({ name: newPath }, "", newPath);
+      if (history.state?.isModal) {
+        history.replaceState({ name: newPath }, "", newPath);
+      } else {
+        history.pushState({ name: newPath }, "", newPath);
+      }
+
       setCurrentPath(newPath);
 
       window.dispatchEvent(
