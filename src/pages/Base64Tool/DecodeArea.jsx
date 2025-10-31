@@ -1,10 +1,11 @@
 import PropTypes from "prop-types";
 import Button from "../../components/Button";
 import { ScanLine, Upload } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Loader from "../../components/Loader";
 
 const DecodeArea = ({
+  mode,
   decodeInput,
   setDecodeInput,
   onDecode,
@@ -28,19 +29,34 @@ const DecodeArea = ({
     }, 0);
   };
 
-  const handleChange = (e) => {
-    setDecodeInput(e.target.value);
+  const handleFileUpload = (e) => {
+    onUploadFile(e.target.files[0]);
+    e.target.value = "";
   };
+
+  useEffect(() => {
+    if (mode !== "decode") return;
+    const handleDecodeOnKeyPress = (e) => {
+      if (e.key.toLowerCase() === "enter" && e.srcElement.type === "textarea") {
+        e.preventDefault();
+        onDecode();
+      }
+    };
+
+    document.addEventListener("keypress", handleDecodeOnKeyPress);
+    return () =>
+      document.removeEventListener("keypress", handleDecodeOnKeyPress);
+  }, [mode, onDecode]);
 
   return (
     <div className="border-base-content/20 bg-base-200 focus-within:border-base-content animate-fade-up relative overflow-hidden rounded-lg border border-solid">
-      {isPasting && <Loader spinLoader={true} />}
+      {isPasting && <Loader spinLoader={true} text="Pasting large text..." />}
       <textarea
         name="decode-input"
         id="decode-input"
         placeholder="e.g: data:image/png;base64 + Enter"
         className="text-base-content/80 h-42 w-full resize-none border-none p-3 text-lg outline-none placeholder:opacity-50"
-        onChange={handleChange}
+        onChange={(e) => setDecodeInput(e.target.value)}
         value={decodeInput}
         disabled={uploading || isPasting}
         onPaste={handlePaste}
@@ -58,7 +74,7 @@ const DecodeArea = ({
             name="upload-base64"
             id="upload-base64"
             accept=".txt"
-            onChange={(e) => onUploadFile(e.target.files[0])}
+            onChange={(e) => handleFileUpload(e)}
             disabled={uploading || isPasting}
             hidden
           />

@@ -1,6 +1,11 @@
 import PropTypes from "prop-types";
 
 const EncodeArea = ({ uploading, onUploadFile }) => {
+  const handleFileUpload = (e) => {
+    onUploadFile(e.target.files[0]);
+    e.target.value = "";
+  };
+
   return (
     <div className="animate-fade-up">
       <label
@@ -27,7 +32,7 @@ const EncodeArea = ({ uploading, onUploadFile }) => {
           name="upload-file"
           id="upload-file"
           accept="image/*,audio/*,video/*"
-          onChange={(e) => onUploadFile(e.target.files[0])}
+          onChange={(e) => handleFileUpload(e)}
           disabled={uploading}
           hidden
         />

@@ -1,3 +1,4 @@
+import PropTypes from "prop-types";
 import Frame from "./Frame";
 
 const Main = ({ children }) => {
@@ -11,4 +12,9 @@ const Main = ({ children }) => {
     </main>
   );
 };
+
+Main.propTypes = {
+  children: PropTypes.elementType,
+};
+
 export default Main;

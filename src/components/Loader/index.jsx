@@ -16,7 +16,7 @@ const Loader = ({ loading, text = "loading...", spinLoader }) => {
       <span>{text}</span>
     </div>
   ) : (
-    <div className="flex-center h-[10vh] flex-col gap-3 text-center">
+    <div className="flex-center h-[10lvh] flex-col gap-3 text-center">
       <BarLoader
         color="var(--color-primary)"
         loading={loading}

@@ -95,7 +95,7 @@ const Base64Tool = () => {
         handleEncode();
       } else if (mode === "decode") {
         if (file.type !== "text/plain" && !file.name.endsWith(".txt")) {
-          toast.error("Please upload .txt file format");
+          toast.error("Invalid file format");
           return;
         }
 
@@ -201,74 +201,6 @@ const Base64Tool = () => {
     [decodeInput],
   );
 
-  const handleFileDownload = async () => {
-    if (!base64Ref.current) {
-      toast.error("No file to download");
-      return;
-    }
-
-    setDownloading(true);
-
-    if (mode === "encode") {
-      const { fileName } = fileMetaData;
-      const base64DataUrl = base64Ref.current;
-      const a = document.createElement("a");
-      a.href =
-        "data:text/plain;charset=utf-8," + encodeURIComponent(base64DataUrl);
-      a.download = `${fileName}.txt`;
-      a.click();
-      setTimeout(() => setDownloading(false), 200);
-    } else if (mode === "decode") {
-      const { fileName, fileType } = fileMetaData;
-      const format = fileType.split("/")[1] || "bin"; // export file format
-      const base64DataUrl = base64Ref.current;
-      const a = document.createElement("a");
-      a.href = base64DataUrl;
-      a.download = `${fileName}.${format}`;
-      a.click();
-      setTimeout(() => setDownloading(false), 200);
-    }
-  };
-
-  const handleTextCopy = async () => {
-    if (!base64Ref.current) {
-      toast.error("No text to copy");
-      return;
-    }
-
-    setCopying(true);
-    try {
-      if (navigator.clipboard && navigator.clipboard.writeText) {
-        await navigator.clipboard.writeText(base64Ref.current);
-        toast.success("Copied to clipboard");
-      } else {
-        toast.error("Copying text failed");
-      }
-    } catch (error) {
-      toast.error("Copy failed" + error.message);
-    } finally {
-      setCopying(false);
-    }
-  };
-
-  useEffect(() => {
-    if (mode !== "decode") return;
-    const handleDecodeOnKeyPress = (e) => {
-      if (e.key.toLowerCase() === "enter" && e.srcElement.type === "textarea") {
-        e.preventDefault();
-        handleDecode();
-      }
-    };
-
-    document.addEventListener("keypress", handleDecodeOnKeyPress);
-    return () =>
-      document.removeEventListener("keypress", handleDecodeOnKeyPress);
-  }, [mode, handleDecode]);
-
-  useEffect(() => {
-    stateResetor(false);
-  }, [mode, stateResetor]);
-
   useEffect(() => {
     if (decodeObjectUrl) {
       return () => {
@@ -276,6 +208,10 @@ const Base64Tool = () => {
       };
     }
   }, [decodeObjectUrl]);
+
+  useEffect(() => {
+    stateResetor(false);
+  }, [mode, stateResetor]);
 
   return (
     <section id="file-encoder" className="w-full">
@@ -287,8 +223,7 @@ const Base64Tool = () => {
             </h1>
             <p className="text-base-content/80 bg-base-100 border-base-content/20 relative w-full overflow-hidden rounded-lg border border-solid p-2 leading-8 text-pretty md:rounded-full md:px-5 md:py-3">
               This online Base64 encoding and decoding tool helps you encode or
-              decode a file from local or URL to Base64 without uploading the
-              file.
+              decode a file from local or URL to Base64
               <span className="via-primary absolute bottom-0 left-0 h-px w-full bg-linear-to-r from-transparent to-transparent"></span>
             </p>
           </header>
@@ -321,13 +256,16 @@ const Base64Tool = () => {
                     <EncodeArea
                       uploading={uploading}
                       onUploadFile={handleFileUpload}
+                      base64Ref={base64Ref.current}
+                      onTextCopy={setCopying}
                     />
                   ) : (
                     <DecodeArea
+                      mode={mode}
+                      uploading={uploading}
                       decodeInput={decodeInput}
                       setDecodeInput={setDecodeInput}
                       onDecode={handleDecode}
-                      uploading={uploading}
                       onUploadFile={handleFileUpload}
                     />
                   )}
@@ -346,9 +284,11 @@ const Base64Tool = () => {
                   <ActionZone
                     mode={mode}
                     downloading={downloading}
-                    onDownload={handleFileDownload}
+                    onDownload={setDownloading}
                     copying={copying}
-                    onCopy={handleTextCopy}
+                    onCopy={setCopying}
+                    base64Ref={base64Ref.current}
+                    fileMetaData={fileMetaData}
                   />
                 </div>
               )}

@@ -1,8 +1,11 @@
 import { MenuIcon, XIcon } from "lucide-react";
 import PropTypes from "prop-types";
+import { useEffect } from "react";
 
 const MobileMenu = ({ isOpen, onToggle }) => {
-  document.body.classList.toggle("overflow-hidden", isOpen);
+  useEffect(() => {
+    document.body.classList.toggle("overflow-hidden", isOpen);
+  }, [isOpen]);
 
   return (
     <button

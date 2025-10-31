@@ -335,3 +335,9 @@ For implementation details, refer to existing components in:
 - `src/pages/TextEditor/` - Form handling patterns
 - `src/pages/Base64Tool/` - State management examples
 - `src/utils/` - Utility function patterns
+
+# Todo app core
+
+CURD options : create - update - read - delete - check - uncheched
+Data saving : local storage - session storage
+Components : TodoItem - FilterBar - AddTaskForm - Todo Container - EmptyState

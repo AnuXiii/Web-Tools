@@ -5,7 +5,7 @@ const ThemeToggle = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [theme, setTheme] = useState("light");
 
-  // set theme on root and local storage
+  // set theme value on root and local storage
   const handleSetTheme = (themeScheme) => {
     setTheme(themeScheme);
     setIsOpen(!isOpen);
@@ -30,7 +30,7 @@ const ThemeToggle = () => {
     return () => document.removeEventListener("click", handleClickOutside);
   }, [isOpen]);
 
-  // close theme dropdown when press ESC
+  // close theme dropdown when press Escape key
   useEffect(() => {
     const handleOnKeyPress = (e) => {
       if (e.key.toLowerCase() === "escape" && isOpen) {

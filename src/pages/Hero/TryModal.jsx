@@ -1,36 +1,8 @@
-import { Dot, X } from "lucide-react";
-import { features } from "../../constants";
+import { X } from "lucide-react";
 import Button from "../../components/Button";
 import { useEffect } from "react";
 import PropTypes from "prop-types";
-
-// render app tools
-const renderTools = () => {
-  return features.slice(1).map(({ name, path, icon: Icon }) => {
-    return (
-      <li key={path} className="group relative w-full" title={name}>
-        <div className="text-base-content/70 pointer-events-none absolute inset-0 grid scale-150 grid-cols-2 items-center justify-between duration-150 group-hover:scale-130">
-          {[...Array(4)].map((_, i) => (
-            <Dot
-              key={i}
-              size={28}
-              className="flex-center justify-self-center"
-            />
-          ))}
-        </div>
-        <Button
-          tag="a"
-          text=""
-          path={path}
-          customClasses={
-            "border border-base-content/20 text-base-content bg-base-100 py-6 hover:opacity-100 [&>svg]:size-12"
-          }
-          icon={Icon}
-        />
-      </li>
-    );
-  });
-};
+import Tools from "./Tools";
 
 const TryModal = ({ onClose }) => {
   // close modal when popstate
@@ -75,7 +47,7 @@ const TryModal = ({ onClose }) => {
           />
         </header>
         <ul className="grid grid-cols-3 items-center justify-center gap-5 *:last:col-span-2">
-          {renderTools()}
+          <Tools />
         </ul>
       </div>
     </div>

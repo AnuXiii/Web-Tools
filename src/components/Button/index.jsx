@@ -8,7 +8,6 @@ const Button = ({
   icon: Icon,
   onClick,
   customClasses,
-  children,
 }) => {
   const Tag = tag;
   const linkProps = path && { href: path, "data-route": path };
@@ -23,7 +22,6 @@ const Button = ({
     >
       {text && <span>{text}</span>}
       {Icon && <Icon />}
-      {children}
     </Tag>
   );
 };
@@ -36,7 +34,6 @@ Button.propTypes = {
   icon: PropTypes.elementType,
   onClick: PropTypes.func,
   customClasses: PropTypes.string,
-  children: PropTypes.element,
 };
 
 export default Button;

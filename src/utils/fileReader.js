@@ -7,7 +7,7 @@ import { toast } from "react-toastify";
  * @param {string} success - success toast message
  * @param {string} error - error toast message
  * @param {Function} onProgress - progress.callback
- * @returns {object}
+ * @returns {object} object with base64String - fileName - fileType
  */
 
 function fileReader(file, readMethod, pending, success, error, onProgress) {

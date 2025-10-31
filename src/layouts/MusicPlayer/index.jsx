@@ -31,9 +31,8 @@ const MusicPlayer = () => {
     if (!audio) return;
 
     if (isPlaying) {
-      audio.play().catch((error) => {
+      audio.play().catch(() => {
         setIsPlaying(false);
-        console.log(error.message);
       });
     } else {
       audio.pause();

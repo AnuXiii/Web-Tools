@@ -1,6 +1,6 @@
 /**
  * @param {string} dataUrl base64 format.
- * @returns {object} an object with objectUrl & fileType.
+ * @returns {object} object with objectUrl & fileType.
  */
 
 function base64ToBlob(dataUrl) {

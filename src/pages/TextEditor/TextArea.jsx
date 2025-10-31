@@ -68,8 +68,8 @@ const TextArea = ({ hasUploaded, onTextChange, isUploading }) => {
   useEffect(() => {
     try {
       sessionStorage.textEditorValue = text;
-    } catch (error) {
-      toast.error(error.message);
+    } catch {
+      toast.error("Error when saved text on session storage");
       setText("");
     }
     onTextChange(text);
@@ -79,7 +79,7 @@ const TextArea = ({ hasUploaded, onTextChange, isUploading }) => {
     <>
       {status === "loading" || isUploading || isPasting ? (
         isPasting ? (
-          <Loader spinLoader={true} />
+          <Loader spinLoader={true} text="Pasting larget text..." />
         ) : (
           <Loader spinLoader={true} text="loading saved data..." />
         )
