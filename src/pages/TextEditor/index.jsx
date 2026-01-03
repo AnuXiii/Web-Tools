@@ -20,7 +20,7 @@ const TextEditor = () => {
     localStorage.downloadFormat || "html",
   );
 
-  const MAX_FILE_SIZE = 1024 * 4; // 4 MB
+  const MAX_FILE_SIZE = 1024 ** 2 * 4; // 4 MB
 
   useEffect(() => {
     localStorage.previewFormat = previewFormat;
@@ -31,7 +31,7 @@ const TextEditor = () => {
     const file = fileUrl;
     if (!file) return;
 
-    if (file.size / 1024 > MAX_FILE_SIZE) {
+    if (file.size > MAX_FILE_SIZE) {
       toast.error("File size exceeds the allowed limit");
       return;
     }

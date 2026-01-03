@@ -19,7 +19,7 @@ const routes = [
   {
     name: "Todo App",
     path: "/todo-app",
-    component: lazy(() => import("../pages/TodoApp")),
+    component: null,
   },
   {
     name: "Data Viewer",

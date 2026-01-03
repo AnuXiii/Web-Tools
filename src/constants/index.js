@@ -76,7 +76,7 @@ const socials = [
   {
     name: "instagram",
     icon: Instagram,
-    link: "https://instagram.com/mahdi.anuxi",
+    link: "https://instagram.com/rostami.dev",
   },
   {
     name: "website",

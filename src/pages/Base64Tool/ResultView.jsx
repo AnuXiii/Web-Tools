@@ -10,16 +10,16 @@ const ResultView = ({
   MAX_PREVIEW_THRESHOLD,
 }) => {
   useEffect(() => {
-    if (result) {
-      document.getElementById("result")?.scrollIntoView({ block: "end" });
-    }
-  }, [result]);
-
-  useEffect(() => {
-    if (showMore) {
+    if (result || showMore) {
       document.getElementById("action-zone")?.scrollIntoView({ block: "end" });
     }
-  }, [showMore]);
+  }, [result, showMore]);
+
+  // useEffect(() => {
+  //   if (showMore) {
+  //     document.getElementById("action-zone")?.scrollIntoView({ block: "end" });
+  //   }
+  // }, [showMore]);
 
   return (
     <>

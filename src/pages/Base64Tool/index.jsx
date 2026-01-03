@@ -25,7 +25,7 @@ const Base64Tool = () => {
 
   const base64Ref = useRef(null);
 
-  const MAX_FILE_SIZE = 1024 * 50; // 50 MB
+  const MAX_FILE_SIZE = 1024 ** 2 * 50; // 50 MB
   const MAX_PREVIEW_THRESHOLD = 10000;
   const VALID_FORMATS = ["image", "audio", "video"];
 
@@ -72,7 +72,7 @@ const Base64Tool = () => {
           return;
         }
 
-        if (file.size / 1024 > MAX_FILE_SIZE) {
+        if (file.size > MAX_FILE_SIZE) {
           toast.error("File size exceeds the allowed limit");
           return;
         }
@@ -227,73 +227,78 @@ const Base64Tool = () => {
               <span className="via-primary absolute bottom-0 left-0 h-px w-full bg-linear-to-r from-transparent to-transparent"></span>
             </p>
           </header>
-          {uploading ? (
-            <Loader />
-          ) : (
-            <div className="space-y-10">
-              <div className="space-y-5">
-                <div
-                  className="flex-center w-max cursor-pointer justify-start gap-3 select-none"
-                  onClick={() =>
-                    mode === "encode" ? setMode("decode") : setMode("encode")
-                  }
-                >
-                  <div className="bg-primary border-base-content flex h-8 w-16 items-center justify-start rounded-full border border-solid py-0.5">
-                    <span
-                      className={`text-neutral border-primary flex-center h-8 w-1/2 rounded-full bg-white duration-200 ${mode === "decode" && "translate-x-full"}`}
-                    >
-                      {mode === "encode" ? (
-                        <FileCode size={20} />
-                      ) : (
-                        <FileScan size={20} />
-                      )}
-                    </span>
-                  </div>
-                  <p className="text-xl capitalize">{mode} mode</p>
+          <div className="space-y-10">
+            <div className="space-y-5">
+              {/* switch mode section */}
+              <div
+                className="flex-center w-max cursor-pointer justify-start gap-3 select-none"
+                onClick={() =>
+                  mode === "encode" ? setMode("decode") : setMode("encode")
+                }
+              >
+                <div className="bg-primary border-base-content flex h-8 w-16 items-center justify-start rounded-full border border-solid py-0.5">
+                  <span
+                    className={`text-neutral border-primary flex-center h-8 w-1/2 rounded-full bg-white duration-200 ${mode === "decode" && "translate-x-full"}`}
+                  >
+                    {mode === "encode" ? (
+                      <FileCode size={20} />
+                    ) : (
+                      <FileScan size={20} />
+                    )}
+                  </span>
                 </div>
-                <div className="min-h-[30lvh]">
-                  {mode === "encode" ? (
-                    <EncodeArea
-                      uploading={uploading}
-                      onUploadFile={handleFileUpload}
-                      base64Ref={base64Ref.current}
-                      onTextCopy={setCopying}
-                    />
-                  ) : (
-                    <DecodeArea
-                      mode={mode}
-                      uploading={uploading}
-                      decodeInput={decodeInput}
-                      setDecodeInput={setDecodeInput}
-                      onDecode={handleDecode}
-                      onUploadFile={handleFileUpload}
-                    />
-                  )}
-                </div>
+                <p className="text-xl capitalize">{mode} mode</p>
               </div>
-              {result && (
-                <div id="result" className="space-y-5">
-                  <h2 className="text-2xl font-semibold">Result :</h2>
-                  <ResultView
-                    mode={mode}
-                    result={result}
-                    showMore={showMore}
-                    setShowMore={setShowMore}
-                    MAX_PREVIEW_THRESHOLD={MAX_PREVIEW_THRESHOLD}
-                  />
-                  <ActionZone
-                    mode={mode}
-                    downloading={downloading}
-                    onDownload={setDownloading}
-                    copying={copying}
-                    onCopy={setCopying}
-                    base64Ref={base64Ref.current}
-                    fileMetaData={fileMetaData}
-                  />
-                </div>
-              )}
+              {/* upload section */}
+              <div className="relative min-h-[30lvh]">
+                {uploading ? (
+                  <Loader spinLoader={true} text="Uploading file..." />
+                ) : (
+                  <>
+                    {mode === "encode" ? (
+                      <EncodeArea
+                        uploading={uploading}
+                        onUploadFile={handleFileUpload}
+                        base64Ref={base64Ref.current}
+                        onTextCopy={setCopying}
+                      />
+                    ) : (
+                      <DecodeArea
+                        mode={mode}
+                        uploading={uploading}
+                        decodeInput={decodeInput}
+                        setDecodeInput={setDecodeInput}
+                        onDecode={handleDecode}
+                        onUploadFile={handleFileUpload}
+                      />
+                    )}
+                  </>
+                )}
+              </div>
             </div>
-          )}
+            {/* result section */}
+            {result && (
+              <div id="result" className="space-y-5">
+                <h2 className="text-2xl font-semibold">Result :</h2>
+                <ResultView
+                  mode={mode}
+                  result={result}
+                  showMore={showMore}
+                  setShowMore={setShowMore}
+                  MAX_PREVIEW_THRESHOLD={MAX_PREVIEW_THRESHOLD}
+                />
+                <ActionZone
+                  mode={mode}
+                  downloading={downloading}
+                  onDownload={setDownloading}
+                  copying={copying}
+                  onCopy={setCopying}
+                  base64Ref={base64Ref.current}
+                  fileMetaData={fileMetaData}
+                />
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </section>
